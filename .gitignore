@@ -45,9 +45,7 @@ build/
 
 # Maven
 target/
-.mvn/
-mvnw
-mvnw.cmd
+
 
 # Gradle (if ever used)
 build/
