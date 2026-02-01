@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: lets-play
+
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://root:rootpass@localhost:27017/lets_play?authSource=admin}
+
+logging:
+  level:
+    org.springframework.data.mongodb: INFO
