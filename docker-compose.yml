@@ -10,6 +10,7 @@ services:
       MONGO_INITDB_DATABASE: lets_play
     volumes:
       - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
     restart: unless-stopped
 
   mongo-express:

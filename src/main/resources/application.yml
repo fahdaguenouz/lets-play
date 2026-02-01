@@ -7,7 +7,9 @@ spring:
 
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://root:rootpass@localhost:27017/lets_play?authSource=admin}
+      uri: "mongodb://letsplay:letsplaypass@localhost:27017/lets_play?authSource=lets_play"
+      auto-index-creation: true
+
 
 logging:
   level:
