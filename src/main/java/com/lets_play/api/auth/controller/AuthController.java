@@ -1,8 +1,7 @@
 package com.lets_play.api.auth.controller;
 
-
-
 import com.lets_play.api.auth.dto.AuthResponse;
+import com.lets_play.api.auth.dto.LoginRequest;
 import com.lets_play.api.auth.dto.RegisterRequest;
 import com.lets_play.api.auth.service.AuthService;
 import jakarta.validation.Valid;
@@ -22,4 +21,10 @@ public class AuthController {
     public AuthResponse register(@Valid @RequestBody RegisterRequest req) {
         return authService.register(req);
     }
+
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody LoginRequest req) {
+        return authService.login(req);
+    }
+
 }
