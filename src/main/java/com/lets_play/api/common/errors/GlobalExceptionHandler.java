@@ -11,9 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.Instant;
 
@@ -38,6 +41,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleMongoAuth(MongoSecurityException ex, HttpServletRequest req) {
         log.error("Mongo security error", ex);
         return build(HttpStatus.SERVICE_UNAVAILABLE, "Database authentication failed", req.getRequestURI());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiError> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex,
+            HttpServletRequest req) {
+        String allowed = ex.getSupportedHttpMethods() == null ? "" : ex.getSupportedHttpMethods().toString();
+        String msg = "Method not allowed. Allowed: " + allowed;
+        return build(HttpStatus.METHOD_NOT_ALLOWED, msg, req.getRequestURI());
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ApiError> handleNoHandler(NoHandlerFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, "Path not found", req.getRequestURI());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleBadJson(HttpMessageNotReadableException ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, "Malformed JSON request body", req.getRequestURI());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
