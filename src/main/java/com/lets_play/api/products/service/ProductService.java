@@ -25,6 +25,12 @@ public class ProductService {
         return productRepository.findAll().stream().map(this::toResponse).toList();
     }
 
+    public ProductResponse getOne(String id) {
+        Product p = productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Product not found"));
+        return toResponse(p);
+    }
+
     public ProductResponse create(ProductCreateRequest req) {
         String userId = currentUserId();
 
@@ -47,9 +53,12 @@ public class ProductService {
 
         assertOwnerOrAdmin(p);
 
-        if (req.name() != null) p.setName(req.name().trim());
-        if (req.description() != null) p.setDescription(req.description().trim());
-        if (req.price() != null) p.setPrice(req.price());
+        if (req.name() != null)
+            p.setName(req.name().trim());
+        if (req.description() != null)
+            p.setDescription(req.description().trim());
+        if (req.price() != null)
+            p.setPrice(req.price());
 
         p.setUpdatedAt(Instant.now());
         return toResponse(productRepository.save(p));
@@ -67,10 +76,10 @@ public class ProductService {
 
     private String currentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getName() == null) {
+        if (auth == null || auth.getPrincipal() == null) {
             throw new ForbiddenException("Not authenticated");
         }
-        return auth.getName(); // because we set userId as name in JwtAuthFilter
+        return auth.getPrincipal().toString(); // ✅ userId
     }
 
     private boolean isAdmin() {
@@ -93,7 +102,6 @@ public class ProductService {
                 p.getDescription(),
                 p.getPrice(),
                 p.getUserId(),
-                p.getCreatedAt()
-        );
+                p.getCreatedAt());
     }
 }

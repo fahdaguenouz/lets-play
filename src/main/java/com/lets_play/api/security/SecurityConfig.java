@@ -24,11 +24,14 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/products/**").authenticated()
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/products/**").authenticated()
                         .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/products/**").authenticated()
-                        .requestMatchers("/users/**").hasRole("ADMIN")
+
+                        .requestMatchers("/users/me").authenticated() // ✅ allow any logged user
+                        .requestMatchers("/users/**").hasRole("ADMIN") // ✅ admin only for the rest
                         .anyRequest().authenticated())
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

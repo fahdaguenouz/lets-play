@@ -29,6 +29,11 @@ public class ProductController {
         return productService.create(req);
     }
 
+    @GetMapping("/{id}")
+    public ProductResponse getOne(@PathVariable String id) {
+        return productService.getOne(id);
+    }
+
     @PutMapping("/{id}")
     public ProductResponse update(@PathVariable String id, @Valid @RequestBody ProductUpdateRequest req) {
         return productService.update(id, req);
