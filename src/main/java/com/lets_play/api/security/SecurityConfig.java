@@ -1,6 +1,5 @@
 package com.lets_play.api.security;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-     private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -25,10 +24,13 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/products").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/products/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/products/**").authenticated()
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/products/**").authenticated()
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/products/**").authenticated()
                         .requestMatchers("/users/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

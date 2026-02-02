@@ -1,6 +1,8 @@
 package com.lets_play.api.common.errors;
 
 import com.lets_play.api.common.exception.ConflictException;
+import com.lets_play.api.common.exception.ForbiddenException;
+import com.lets_play.api.common.exception.NotFoundException;
 import com.lets_play.api.common.exception.UnauthorizedException;
 import com.mongodb.MongoSecurityException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +43,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiError> handleUnauthorized(UnauthorizedException ex, HttpServletRequest req) {
         return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), req.getRequestURI());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFound(NotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), req.getRequestURI());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleForbidden(ForbiddenException ex, HttpServletRequest req) {
+        return build(HttpStatus.FORBIDDEN, ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
