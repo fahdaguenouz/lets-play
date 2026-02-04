@@ -49,7 +49,6 @@ public class UserService {
                 .username(username)
                 .passwordHash(passwordEncoder.encode(req.password()))
                 .role(req.role() == null ? Role.USER : req.role())
-                .status("ACTIVE")
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
@@ -80,7 +79,6 @@ public class UserService {
         if (req.name() != null) u.setName(req.name().trim());
         if (req.password() != null) u.setPasswordHash(passwordEncoder.encode(req.password()));
         if (req.role() != null) u.setRole(req.role());
-        if (req.status() != null) u.setStatus(req.status());
 
         u.setUpdatedAt(Instant.now());
         return toResponse(userRepository.save(u));
@@ -113,7 +111,6 @@ public class UserService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
-                user.getStatus(),
                 user.getCreatedAt()
         );
     }

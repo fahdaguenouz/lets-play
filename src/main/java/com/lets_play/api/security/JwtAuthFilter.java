@@ -48,10 +48,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .toList();
             }
 
-            var authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
-            authentication.setDetails(username); // optional
-
+            var principal = new AuthPrincipal(userId, username);
+            var authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
         } catch (Exception e) {
             // invalid token -> ignore and continue without auth
             SecurityContextHolder.clearContext();

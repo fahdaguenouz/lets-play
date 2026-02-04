@@ -31,9 +31,6 @@ public class User {
 
     private Role role;
 
-    // optional: to support bans later
-    private String status; // e.g. "ACTIVE", "BANNED"
-
     private Instant createdAt;
     private Instant updatedAt;
 }

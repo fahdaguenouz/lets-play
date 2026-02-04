@@ -13,6 +13,5 @@ public record UserResponse(
         String username,
         String email,
         Role role,
-        String status,
         Instant createdAt
 ) {}

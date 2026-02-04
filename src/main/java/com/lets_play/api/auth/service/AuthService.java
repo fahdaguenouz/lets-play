@@ -41,7 +41,6 @@ public class AuthService {
                 .username(username)
                 .passwordHash(passwordEncoder.encode(req.password()))
                 .role(Role.USER)
-                .status("ACTIVE")
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
@@ -84,7 +83,6 @@ public class AuthService {
                 u.getUsername(),
                 u.getEmail(),
                 u.getRole(),
-                u.getStatus(),
                 u.getCreatedAt()
         );
     }

@@ -2,11 +2,14 @@ package com.lets_play.api.products.service;
 
 import com.lets_play.api.common.exception.ForbiddenException;
 import com.lets_play.api.common.exception.NotFoundException;
+import com.lets_play.api.common.exception.UnauthorizedException;
 import com.lets_play.api.products.dto.ProductCreateRequest;
 import com.lets_play.api.products.dto.ProductResponse;
 import com.lets_play.api.products.dto.ProductUpdateRequest;
 import com.lets_play.api.products.model.Product;
 import com.lets_play.api.products.repo.ProductRepository;
+import com.lets_play.api.security.AuthPrincipal;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -75,11 +78,12 @@ public class ProductService {
     // ---------------- helpers ----------------
 
     private String currentUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getPrincipal() == null) {
-            throw new ForbiddenException("Not authenticated");
-        }
-        return auth.getPrincipal().toString(); // ✅ userId
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null)
+           throw new UnauthorizedException("Unauthorized");
+
+        var principal = (AuthPrincipal) auth.getPrincipal();
+        return principal.userId();
     }
 
     private boolean isAdmin() {

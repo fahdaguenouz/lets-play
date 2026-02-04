@@ -54,7 +54,6 @@ public class AdminSeeder implements ApplicationRunner {
                 .email(normalizedEmail)
                 .passwordHash(passwordEncoder.encode(password))
                 .role(Role.ADMIN)
-                .status("ACTIVE")
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
