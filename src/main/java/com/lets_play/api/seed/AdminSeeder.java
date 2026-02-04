@@ -28,10 +28,10 @@ public class AdminSeeder implements ApplicationRunner {
     @Value("${app.seed.admin.username:admin}")
     private String username;
 
-    @Value("${app.seed.admin.email:admin@letsplay.local}")
+    @Value("${app.seed.admin.email:admin@gmail.com}")
     private String email;
 
-    @Value("${app.seed.admin.password:admin123456}")
+    @Value("${app.seed.admin.password:password123}")
     private String password;
 
     @Override

@@ -79,11 +79,14 @@ public class ProductService {
 
     private String currentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getPrincipal() == null)
-           throw new UnauthorizedException("Unauthorized");
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
 
-        var principal = (AuthPrincipal) auth.getPrincipal();
-        return principal.userId();
+        Object principal = auth.getPrincipal();
+        if (principal instanceof AuthPrincipal ap)
+            return ap.userId();
+        return principal.toString();
     }
 
     private boolean isAdmin() {

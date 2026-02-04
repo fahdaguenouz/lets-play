@@ -1,6 +1,9 @@
 package com.lets_play.api.users.service;
+
 import com.lets_play.api.common.exception.ConflictException;
 import com.lets_play.api.common.exception.NotFoundException;
+import com.lets_play.api.common.exception.UnauthorizedException;
+import com.lets_play.api.security.AuthPrincipal;
 import com.lets_play.api.users.dto.UserCreateRequest;
 import com.lets_play.api.users.dto.UserResponse;
 import com.lets_play.api.users.dto.UserUpdateRequest;
@@ -38,8 +41,10 @@ public class UserService {
         String email = req.email().trim().toLowerCase();
         String username = req.username().trim().toLowerCase();
 
-        if (userRepository.existsByEmail(email)) throw new ConflictException("Email already in use");
-        if (userRepository.existsByUsername(username)) throw new ConflictException("Username already in use");
+        if (userRepository.existsByEmail(email))
+            throw new ConflictException("Email already in use");
+        if (userRepository.existsByUsername(username))
+            throw new ConflictException("Username already in use");
 
         Instant now = Instant.now();
 
@@ -76,9 +81,12 @@ public class UserService {
             u.setUsername(username);
         }
 
-        if (req.name() != null) u.setName(req.name().trim());
-        if (req.password() != null) u.setPasswordHash(passwordEncoder.encode(req.password()));
-        if (req.role() != null) u.setRole(req.role());
+        if (req.name() != null)
+            u.setName(req.name().trim());
+        if (req.password() != null)
+            u.setPasswordHash(passwordEncoder.encode(req.password()));
+        if (req.role() != null)
+            u.setRole(req.role());
 
         u.setUpdatedAt(Instant.now());
         return toResponse(userRepository.save(u));
@@ -93,13 +101,21 @@ public class UserService {
     public UserResponse me() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || auth.getPrincipal() == null) {
-            throw new NotFoundException("User not found");
+            throw new UnauthorizedException("Unauthorized");
         }
 
-        String userId = auth.getPrincipal().toString();
+        String userId;
+
+        Object principal = auth.getPrincipal();
+        if (principal instanceof AuthPrincipal ap) {
+            userId = ap.userId();
+        } else {
+            // fallback (in case something sets principal as String)
+            userId = principal.toString();
+        }
 
         var user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new UnauthorizedException("Unauthorized"));
 
         return toResponse(user);
     }
@@ -111,7 +127,6 @@ public class UserService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
-                user.getCreatedAt()
-        );
+                user.getCreatedAt());
     }
 }
