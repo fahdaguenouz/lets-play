@@ -7,6 +7,7 @@ import com.lets_play.api.users.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,17 +27,20 @@ public class UserController {
 
     // admin only (secured by SecurityConfig)
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> listAll() {
         return userService.listAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getById(@PathVariable String id) {
         return userService.getById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse create(@Valid @RequestBody UserCreateRequest req) {
         return userService.create(req);
     }
@@ -48,7 +52,9 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable String id) {
         userService.delete(id);
     }
+    
 }
