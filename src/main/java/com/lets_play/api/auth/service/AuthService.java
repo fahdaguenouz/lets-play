@@ -26,7 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthResponse register(RegisterRequest req) {
+    public UserResponse register(RegisterRequest req) {
         String email = req.email().trim().toLowerCase();
         String username = req.username().trim().toLowerCase();
 
@@ -47,13 +47,7 @@ public class AuthService {
 
         User saved = userRepository.save(user);
 
-        String token = jwtService.generateToken(
-                saved.getId(),
-                saved.getUsername(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + saved.getRole().name()))
-        );
-
-        return new AuthResponse(toUserResponse(saved), token);
+        return toUserResponse(saved);
     }
 
     public AuthResponse login(LoginRequest req) {

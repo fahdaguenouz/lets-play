@@ -4,6 +4,8 @@ import com.lets_play.api.auth.dto.AuthResponse;
 import com.lets_play.api.auth.dto.LoginRequest;
 import com.lets_play.api.auth.dto.RegisterRequest;
 import com.lets_play.api.auth.service.AuthService;
+import com.lets_play.api.users.dto.UserResponse;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthResponse register(@Valid @RequestBody RegisterRequest req) {
+    public UserResponse register(@Valid @RequestBody RegisterRequest req) {
         return authService.register(req);
     }
 
