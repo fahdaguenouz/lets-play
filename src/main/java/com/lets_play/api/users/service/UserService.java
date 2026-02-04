@@ -3,6 +3,7 @@ package com.lets_play.api.users.service;
 import com.lets_play.api.common.exception.ConflictException;
 import com.lets_play.api.common.exception.NotFoundException;
 import com.lets_play.api.common.exception.UnauthorizedException;
+import com.lets_play.api.products.repo.ProductRepository;
 import com.lets_play.api.security.AuthPrincipal;
 import com.lets_play.api.users.dto.UserCreateRequest;
 import com.lets_play.api.users.dto.UserResponse;
@@ -26,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProductRepository productRepository;
 
     public List<UserResponse> listAll() {
         return userRepository.findAll().stream().map(this::toResponse).toList();
@@ -95,6 +97,8 @@ public class UserService {
     public void delete(String id) {
         User u = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
+
+        productRepository.deleteAllByUserId(id); // delete owned products
         userRepository.delete(u);
     }
 
