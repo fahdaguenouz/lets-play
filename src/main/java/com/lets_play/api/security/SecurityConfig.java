@@ -16,12 +16,17 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
-
+     private final JsonAccessDeniedHandler accessDeniedHandler;
+    private final JsonAuthEntryPoint authEntryPoint;
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler(accessDeniedHandler)      // 403
+                        .authenticationEntryPoint(authEntryPoint)      // 401
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
 
@@ -30,8 +35,8 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/products/**").authenticated()
                         .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/products/**").authenticated()
 
-                        .requestMatchers("/users/me").authenticated() // ✅ allow any logged user
-                        .requestMatchers("/users/**").hasRole("ADMIN") // ✅ admin only for the rest
+                        .requestMatchers("/users/me").authenticated()
+                        .requestMatchers("/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
